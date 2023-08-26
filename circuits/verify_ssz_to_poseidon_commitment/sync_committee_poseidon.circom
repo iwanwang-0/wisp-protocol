@@ -10,8 +10,8 @@ template CalcSyncCommitteePoseidon(b, k) {
     component poseidonSyncCommittee = PubkeyPoseidon(b, k);
     for (var i=0; i < b; i++) {
         for (var j=0; j < k; j++) {
-            poseidonSyncCommittee.pubkeys[i][0][j] <== pubkeys[i][0][j];
-            poseidonSyncCommittee.pubkeys[i][1][j] <== pubkeys[i][1][j];
+            poseidonSyncCommittee.pubkeys[i][0][j] <== pubkeysBigIntX[i][j];
+            poseidonSyncCommittee.pubkeys[i][1][j] <== pubkeysBigIntY[i][j];
         }
     }
 

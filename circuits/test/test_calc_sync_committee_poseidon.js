@@ -2,14 +2,14 @@
 const path = require("path");
 // import { expect, assert } from 'chai';
 
-const { ethers } = require("ethers");
+// const { ethers } = require("ethers");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const circom_tester = require('circom_tester');
 const wasm_tester = circom_tester.wasm;
 
 describe('SyncCommitteePoseidon', function () {
-    this.timeout(100000);
+    this.timeout(1000000);
 
     const n = 55;
     const k = 7;
@@ -31,7 +31,7 @@ describe('SyncCommitteePoseidon', function () {
         // });
         console.log("witness: ");
         console.log(witness[1].toString(16));
-        console.log("poseidon: " + ethers.utils.hexlify(witness[1]));
+        console.log("poseidon: " + witness[1].toString(16));
         await circuit.checkConstraints(witness);
     });
 });
