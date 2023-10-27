@@ -1,4 +1,5 @@
 import axios from "axios";
+import fetch from "node-fetch";
 import {Utils} from "./utils";
 import * as lodestar from '@lodestar/types';
 
