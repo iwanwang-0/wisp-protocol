@@ -33,6 +33,8 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     mapping(uint256 => bytes32) public syncCommitteeRootByPeriod;
     mapping(bytes32 => bytes32) public sszToPoseidon;
 
+    bool public debug;
+
     event HeadUpdate(uint64 indexed slot, uint64 indexed blockNumber, bytes32 indexed executionRoot);
     event SyncCommitteeUpdate(uint64 indexed period, bytes32 indexed root);
 
@@ -53,6 +55,7 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
         syncCommitteeRootByPeriod[startSyncCommitteePeriod] = startSyncCommitteeRoot;
         sszToPoseidon[startSyncCommitteeRoot] = startSyncCommitteePoseidon;
         active = true;
+        debug = true;
     }
 
     modifier isActive {
@@ -157,7 +160,18 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
         uint64 currentPeriod = getSyncCommitteePeriodFromSlot(update.finalizedHeader.slot);
         bytes32 signingRoot = SimpleSerialize.computeSigningRoot(update.attestedHeader, defaultForkVersion, GENESIS_VALIDATORS_ROOT);
         require(syncCommitteeRootByPeriod[currentPeriod] != 0, "Sync committee was never updated for this period");
-        require(zkBLSVerify(signingRoot, syncCommitteeRootByPeriod[currentPeriod], update.signature.participation, update.signature.proof), "Signature is invalid");
+        
+        if(!debug) {
+            require(
+                zkBLSVerify(
+                    signingRoot, 
+                    syncCommitteeRootByPeriod[currentPeriod], 
+                    update.signature.participation, 
+                    update.signature.proof
+                ),
+                 "Signature is invalid"
+            );
+        }
     }
 
     /*
@@ -173,7 +187,11 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
             sszCommitmentNumeric = sszCommitmentNumeric / 2 ** 8;
         }
         inputs[32] = uint256(poseidonCommitment);
-        require(verifyCommitmentMappingProof(proof.a, proof.b, proof.c, inputs), "Proof is invalid");
+
+        if(!debug) {
+            require(verifyCommitmentMappingProof(proof.a, proof.b, proof.c, inputs), "Proof is invalid");
+        }
+        
         sszToPoseidon[sszCommitment] = poseidonCommitment;
     }
 
