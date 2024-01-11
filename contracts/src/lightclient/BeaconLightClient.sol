@@ -159,9 +159,9 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
 
         uint64 currentPeriod = getSyncCommitteePeriodFromSlot(update.finalizedHeader.slot);
         bytes32 signingRoot = SimpleSerialize.computeSigningRoot(update.attestedHeader, defaultForkVersion, GENESIS_VALIDATORS_ROOT);
-        require(syncCommitteeRootByPeriod[currentPeriod] != 0, "Sync committee was never updated for this period");
         
         if(!debug) {
+            require(syncCommitteeRootByPeriod[currentPeriod] != 0, "Sync committee was never updated for this period");
             require(
                 zkBLSVerify(
                     signingRoot, 
