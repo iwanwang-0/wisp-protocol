@@ -66,3 +66,15 @@ forge script script/CRCOutbox.s.sol --rpc-url {RPC} -vvvv --broadcast
 ```bash
 forge script script/OptimismInbox.s.sol --rpc-url {RPC} -vvvv --broadcast
 ```
+
+**Set CRCInbox Registry**
+
+```bash
+forge script script/SetCRCInboxRegistry.s.sol --rpc-url optimism-goerli -vvvv --broadcast
+```
+
+**Sending msg**
+
+```bash
+forge script script/SendMsg.s.sol --rpc-url optimism-goerli -vvvv --broadcast
+```

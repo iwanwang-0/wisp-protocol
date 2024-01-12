@@ -7,13 +7,13 @@ import {Types} from "../src/crc-messages/libraries/Types.sol";
 
 contract SendMsg is Script {
     function run() external {
-        address outboxAddr = address(0x5380fDE220CFC9cbad8F99E19d2E875d1aB36081);
+        address outboxAddr = address(0xd3ceBfFAc4c7FFc78b0645713719D259F2EBC2D6);
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 
         Types.CRCMessage memory message = Types.CRCMessage(
             1,
             vm.envUint("CHAIN_ID"), // destination chian id
-            0,
+            1,
             msg.sender,
             address(1),
             "Hello world",
