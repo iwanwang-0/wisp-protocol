@@ -13,9 +13,9 @@ contract SendMsg is Script {
         Types.CRCMessage memory message = Types.CRCMessage(
             1,
             vm.envUint("CHAIN_ID"), // destination chian id
-            1,
+            3,
             msg.sender,
-            address(1),
+            address(0x3091078046ECFeB8a06d392E90b3eF608F21ED65),
             "Hello world",
             0.1 ether,
             0.1 ether,

@@ -73,6 +73,11 @@ forge script script/OptimismInbox.s.sol --rpc-url {RPC} -vvvv --broadcast
 forge script script/SetCRCInboxRegistry.s.sol --rpc-url optimism-goerli -vvvv --broadcast
 ```
 
+**Deploy ReceiverDemo**
+```bash
+forge script script/ReceiverDemo.s.sol --rpc-url {RPC} -vvvv --broadcast --verify
+```
+
 **Sending msg**
 
 ```bash
