@@ -8,7 +8,9 @@ fs_permissions = [{ access = "read", path = "./"}]
 goerli = "${GOERLI_RPC_URL}"
 zkevm = "${ZKEVM_RPC_URL}"
 optimism-goerli = "${OPTIMISM_GOERLI_RPC_URL}"
+base-goerli = "${BASE_GOERLI_RPC_URL}"
 
 [etherscan]
 goerli = { key = "${ETHERSCAN_API_KEY}" }
 optimism-goerli = { key = "${OPTIMISM_ETHERSCAN_API_KEY}" }
+base-goerli = { key = "${BASE_ETHERSCAN_API_KEY}" }

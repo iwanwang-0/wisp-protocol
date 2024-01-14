@@ -4,18 +4,34 @@ pragma solidity ^0.8.13;
 import "forge-std/Script.sol";
 import {CRCOutbox} from "../src/crc-messages/CRCOutbox.sol";
 import {Types} from "../src/crc-messages/libraries/Types.sol";
+import "forge-std/console.sol";
 
 contract SendMsg is Script {
-    function run() external {
-        address outboxAddr = address(0xd3ceBfFAc4c7FFc78b0645713719D259F2EBC2D6);
+    function run(string memory network) external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+
+        address outboxAddr;
+        uint256 chainId;
+        address receiverDemo;
+
+        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("optimism-goerli"))) {
+            outboxAddr = vm.envAddress("OPTIMISM_GOERLI_OUTBOX_ADDRESS");
+            chainId = vm.envUint("BASE_GOERLI_CHAIN_ID");
+            receiverDemo = vm.envAddress("BASE_GOERLI_RECEIVER_DEMO");
+        } else if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("base-goerli"))) {
+            outboxAddr = vm.envAddress("BASE_GOERLI_OUTBOX_ADDRESS");
+            chainId = vm.envUint("OPTIMISM_GOERLI_CHAIN_ID");
+            receiverDemo = vm.envAddress("OPTIMISM_GOERLI_RECEIVER_DEMO");
+        } else {
+            revert("Unknown network");
+        }
 
         Types.CRCMessage memory message = Types.CRCMessage(
             1,
-            vm.envUint("CHAIN_ID"), // destination chian id
+            chainId, // destination chian id
             3,
             msg.sender,
-            address(0x3091078046ECFeB8a06d392E90b3eF608F21ED65),
+            receiverDemo,
             "Hello world",
             0.1 ether,
             0.1 ether,
