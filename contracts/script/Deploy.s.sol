@@ -47,19 +47,23 @@ contract Deploy is Script {
     }
 
     function deployInbox(string memory network) public returns (address) {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         address _lightClient;
         address _outputOracle;
         if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("optimism-goerli"))) {
             _lightClient = vm.envAddress("OPTIMISM_GOERLI_LIGHT_CLIENT_ADDRESS");
-            _outputOracle = vm.envAddress("OPTIMISM_GOERLI_OUTPUT_ORACLE");
+            _outputOracle = vm.envAddress("BASE_GOERLI_OUTPUT_ORACLE");
         } else if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("base-goerli"))) {
             _lightClient = vm.envAddress("BASE_GOERLI_LIGHT_CLIENT_ADDRESS");
-            _outputOracle = vm.envAddress("BASE_GOERLI_OUTPUT_ORACLE");
+            _outputOracle = vm.envAddress("OPTIMISM_GOERLI_OUTPUT_ORACLE");
         } else {
             revert("Unknown network");
         }
         
+        return _deployInbox(_lightClient, _outputOracle);
+    }
+
+    function _deployInbox(address _lightClient, address _outputOracle) internal returns (address) {
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
         OptimismInbox inbox = new OptimismInbox(_lightClient, _outputOracle);
         vm.stopBroadcast();
@@ -76,9 +80,18 @@ contract Deploy is Script {
     }
 
     function run(string memory network) external {
+        address _outputOracle;
+        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("optimism-goerli"))) {
+            _outputOracle = vm.envAddress("BASE_GOERLI_OUTPUT_ORACLE");
+        } else if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("base-goerli"))) {
+            _outputOracle = vm.envAddress("OPTIMISM_GOERLI_OUTPUT_ORACLE");
+        } else {
+            revert("Unknown network");
+        }
+
         address lightClient = deployLC();
         address outbox = deployOutbox();
-        address inbox = deployInbox(network);
+        address inbox = _deployInbox(lightClient, _outputOracle);
         address receiver = deployReceiverDemo();
 
         console.log("lightClient: ", lightClient);

@@ -63,8 +63,8 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
         _;
     }
 
-    modifier verifyLightClientUpdate(LightClientUpdate calldata _update) {
-        _verifyLightClientUpdate(_update);
+    modifier verifyLightClientUpdate(LightClientUpdate calldata _lcUpdate) {
+        _verifyLightClientUpdate(_lcUpdate);
         _;
     }
 
@@ -80,19 +80,19 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     *   1) At least 2n/3+1 signatures from the current sync committee where n = 512
     *   2) A valid merkle proof for the finalized header inside the currently attested header
     */
-    function update(LightClientUpdate calldata update) external isActive verifyLightClientUpdate(update) {
-        _update(update);
+    function update(LightClientUpdate calldata lcUpdate) external isActive verifyLightClientUpdate(lcUpdate) {
+        _update(lcUpdate);
     }
 
-    function _update(LightClientUpdate calldata update) internal {
-        require(update.finalizedHeader.slot > headSlot, "Update slot must be greater than the current head");
-        require(update.finalizedHeader.slot <= getCurrentSlot(), "Update slot is too far in the future");
+    function _update(LightClientUpdate calldata lcUpdate) internal {
+        require(lcUpdate.finalizedHeader.slot > headSlot, "Update slot must be greater than the current head");
+        require(lcUpdate.finalizedHeader.slot <= getCurrentSlot(), "Update slot is too far in the future");
 
-        headSlot = update.finalizedHeader.slot;
-        headBlockNumber = update.blockNumber;
-        slot2block[update.finalizedHeader.slot] = update.blockNumber;
-        executionStateRoots[update.blockNumber] = update.executionStateRoot;
-        emit HeadUpdate(update.finalizedHeader.slot, update.blockNumber, update.executionStateRoot);
+        headSlot = lcUpdate.finalizedHeader.slot;
+        headBlockNumber = lcUpdate.blockNumber;
+        slot2block[lcUpdate.finalizedHeader.slot] = lcUpdate.blockNumber;
+        executionStateRoots[lcUpdate.blockNumber] = lcUpdate.executionStateRoot;
+        emit HeadUpdate(lcUpdate.finalizedHeader.slot, lcUpdate.blockNumber, lcUpdate.executionStateRoot);
     }
     /*
     * @dev Set the sync committee validator set root for the next sync committee period. This root is signed by the current
@@ -100,27 +100,27 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     * poseidon merkle root (a zk-friendly hash function)
     */
     function updateWithSyncCommittee(
-        LightClientUpdate calldata update,
+        LightClientUpdate calldata lcUpdate,
         bytes32 nextSyncCommitteePoseidon,
         Groth16Proof calldata commitmentMappingProof
-    ) external isActive verifyLightClientUpdate(update) {
-        _update(update);
+    ) external isActive verifyLightClientUpdate(lcUpdate) {
+        _update(lcUpdate);
 
-        uint64 currentPeriod = getSyncCommitteePeriodFromSlot(update.finalizedHeader.slot);
+        uint64 currentPeriod = getSyncCommitteePeriodFromSlot(lcUpdate.finalizedHeader.slot);
         uint64 nextPeriod = currentPeriod + 1;
         require(syncCommitteeRootByPeriod[nextPeriod] == 0, "Next sync committee was already initialized");
         require(SimpleSerialize.isValidMerkleBranch(
-                update.nextSyncCommitteeRoot,
+                lcUpdate.nextSyncCommitteeRoot,
                 NEXT_SYNC_COMMITTEE_INDEX,
-                update.nextSyncCommitteeBranch,
-                update.finalizedHeader.stateRoot
+                lcUpdate.nextSyncCommitteeBranch,
+                lcUpdate.finalizedHeader.stateRoot
             ), "Next sync committee proof is invalid");
 
-        zkMapSSZToPoseidon(update.nextSyncCommitteeRoot, nextSyncCommitteePoseidon, commitmentMappingProof);
+        zkMapSSZToPoseidon(lcUpdate.nextSyncCommitteeRoot, nextSyncCommitteePoseidon, commitmentMappingProof);
 
         latestSyncCommitteePeriod = nextPeriod;
-        syncCommitteeRootByPeriod[nextPeriod] = update.nextSyncCommitteeRoot;
-        emit SyncCommitteeUpdate(nextPeriod, update.nextSyncCommitteeRoot);
+        syncCommitteeRootByPeriod[nextPeriod] = lcUpdate.nextSyncCommitteeRoot;
+        emit SyncCommitteeUpdate(nextPeriod, lcUpdate.nextSyncCommitteeRoot);
     }
 
     /*
@@ -130,35 +130,35 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
     *   3) Checks that 2n/3+1 signatures are provided
     *   4) Verifies that the light client update has update.signature.participation signatures from the current sync committee with a zkSNARK
     */
-    function _verifyLightClientUpdate(LightClientUpdate calldata update) internal view {
-        require(update.finalityBranch.length > 0, "No finality branches provided");
-        require(update.executionStateRootBranch.length > 0, "No execution state root branches provided");
+    function _verifyLightClientUpdate(LightClientUpdate calldata lcUpdate) internal view {
+        require(lcUpdate.finalityBranch.length > 0, "No finality branches provided");
+        require(lcUpdate.executionStateRootBranch.length > 0, "No execution state root branches provided");
 
         // Potential for improvement: Use multi-node merkle inclusion proofs instead of 2 separate single proofs
         require(SimpleSerialize.isValidMerkleBranch(
-                SimpleSerialize.sszBeaconBlockHeader(update.finalizedHeader),
+                SimpleSerialize.sszBeaconBlockHeader(lcUpdate.finalizedHeader),
                 FINALIZED_ROOT_INDEX,
-                update.finalityBranch,
-                update.attestedHeader.stateRoot
+                lcUpdate.finalityBranch,
+                lcUpdate.attestedHeader.stateRoot
             ), "Finality checkpoint proof is invalid");
 
         require(SimpleSerialize.isValidMerkleBranch(
-                update.executionStateRoot,
+                lcUpdate.executionStateRoot,
                 EXECUTION_STATE_ROOT_INDEX,
-                update.executionStateRootBranch,
-                update.finalizedHeader.bodyRoot
+                lcUpdate.executionStateRootBranch,
+                lcUpdate.finalizedHeader.bodyRoot
             ), "Execution state root proof is invalid");
         require(SimpleSerialize.isValidMerkleBranch(
-                SimpleSerialize.toLittleEndian(update.blockNumber),
+                SimpleSerialize.toLittleEndian(lcUpdate.blockNumber),
                 BLOCK_NUMBER_ROOT_INDEX,
-                update.blockNumberBranch,
-                update.finalizedHeader.bodyRoot
+                lcUpdate.blockNumberBranch,
+                lcUpdate.finalizedHeader.bodyRoot
             ), "Block number proof is invalid");
 
-        require(3 * update.signature.participation > 2 * SYNC_COMMITTEE_SIZE, "Not enough members of the sync committee signed");
+        require(3 * lcUpdate.signature.participation > 2 * SYNC_COMMITTEE_SIZE, "Not enough members of the sync committee signed");
 
-        uint64 currentPeriod = getSyncCommitteePeriodFromSlot(update.finalizedHeader.slot);
-        bytes32 signingRoot = SimpleSerialize.computeSigningRoot(update.attestedHeader, defaultForkVersion, GENESIS_VALIDATORS_ROOT);
+        uint64 currentPeriod = getSyncCommitteePeriodFromSlot(lcUpdate.finalizedHeader.slot);
+        bytes32 signingRoot = SimpleSerialize.computeSigningRoot(lcUpdate.attestedHeader, defaultForkVersion, GENESIS_VALIDATORS_ROOT);
         
         if(!debug) {
             require(syncCommitteeRootByPeriod[currentPeriod] != 0, "Sync committee was never updated for this period");
@@ -166,8 +166,8 @@ contract BeaconLightClient is PoseidonCommitmentVerifier, BLSAggregatedSignature
                 zkBLSVerify(
                     signingRoot, 
                     syncCommitteeRootByPeriod[currentPeriod], 
-                    update.signature.participation, 
-                    update.signature.proof
+                    lcUpdate.signature.participation, 
+                    lcUpdate.signature.proof
                 ),
                  "Signature is invalid"
             );

@@ -91,8 +91,8 @@ contract BeaconLightClientTest is Test {
         b[1][1] = json.readUint(".ssz2PoseidonProof.b[1][1]");
         c[0] = json.readUint(".ssz2PoseidonProof.c[0]");
         c[1] = json.readUint(".ssz2PoseidonProof.c[1]");
-        Groth16Proof memory proof = Groth16Proof(a, b, c);
-        return (lcUpdate, nextSyncCommitteePoseidon, proof);
+        Groth16Proof memory _proof = Groth16Proof(a, b, c);
+        return (lcUpdate, nextSyncCommitteePoseidon, _proof);
     }
 
     function readLightClientUpdateTestData(
@@ -150,7 +150,7 @@ contract BeaconLightClientTest is Test {
         );
     }
 
-    function buildSignatureObject(string memory json) public view returns (BLSAggregatedSignature memory) {
+    function buildSignatureObject(string memory json) public pure returns (BLSAggregatedSignature memory) {
         uint256[2] memory a = [uint256(0), uint256(0)];
         uint256[2][2] memory b = [
         [uint256(0), uint256(0)],
