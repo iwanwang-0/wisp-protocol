@@ -10,14 +10,14 @@ contract Settings is Script {
         address outbox;
         uint256 chainId;
 
-        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("optimism-goerli"))) {
-            inboxAddress = vm.envAddress("OPTIMISM_GOERLI_CRC_INBOX");
-            outbox = vm.envAddress("BASE_GOERLI_OUTBOX_ADDRESS");
-            chainId = vm.envUint("BASE_GOERLI_CHAIN_ID");
-        } else if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("base-goerli"))) {
-            inboxAddress = vm.envAddress("BASE_GOERLI_CRC_INBOX");
-            outbox = vm.envAddress("OPTIMISM_GOERLI_OUTBOX_ADDRESS");
-            chainId = vm.envUint("OPTIMISM_GOERLI_CHAIN_ID");
+        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("optimism-sepolia"))) {
+            inboxAddress = vm.envAddress("OPTIMISM_SEPOLIA_CRC_INBOX");
+            outbox = vm.envAddress("BASE_SEPOLIA_OUTBOX_ADDRESS");
+            chainId = vm.envUint("BASE_SEPOLIA_CHAIN_ID");
+        } else if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("base-sepolia"))) {
+            inboxAddress = vm.envAddress("BASE_SEPOLIA_CRC_INBOX");
+            outbox = vm.envAddress("OPTIMISM_SEPOLIA_OUTBOX_ADDRESS");
+            chainId = vm.envUint("OPTIMISM_SEPOLIA_CHAIN_ID");
         } else {
             revert("Unknown network");
         }

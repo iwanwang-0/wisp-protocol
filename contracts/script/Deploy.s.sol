@@ -49,12 +49,12 @@ contract Deploy is Script {
     function deployInbox(string memory network) public returns (address) {
         address _lightClient;
         address _outputOracle;
-        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("optimism-goerli"))) {
-            _lightClient = vm.envAddress("OPTIMISM_GOERLI_LIGHT_CLIENT_ADDRESS");
-            _outputOracle = vm.envAddress("BASE_GOERLI_OUTPUT_ORACLE");
-        } else if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("base-goerli"))) {
-            _lightClient = vm.envAddress("BASE_GOERLI_LIGHT_CLIENT_ADDRESS");
-            _outputOracle = vm.envAddress("OPTIMISM_GOERLI_OUTPUT_ORACLE");
+        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("optimism-sepolia"))) {
+            _lightClient = vm.envAddress("OPTIMISM_SEPOLIA_LIGHT_CLIENT_ADDRESS");
+            _outputOracle = vm.envAddress("BASE_SEPOLIA_OUTPUT_ORACLE");
+        } else if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("base-sepolia"))) {
+            _lightClient = vm.envAddress("BASE_SEPOLIA_LIGHT_CLIENT_ADDRESS");
+            _outputOracle = vm.envAddress("OPTIMISM_SEPOLIA_OUTPUT_ORACLE");
         } else {
             revert("Unknown network");
         }
@@ -81,10 +81,10 @@ contract Deploy is Script {
 
     function run(string memory network) external {
         address _outputOracle;
-        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("optimism-goerli"))) {
-            _outputOracle = vm.envAddress("BASE_GOERLI_OUTPUT_ORACLE");
-        } else if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("base-goerli"))) {
-            _outputOracle = vm.envAddress("OPTIMISM_GOERLI_OUTPUT_ORACLE");
+        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("optimism-sepolia"))) {
+            _outputOracle = vm.envAddress("BASE_SEPOLIA_OUTPUT_ORACLE");
+        } else if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("base-sepolia"))) {
+            _outputOracle = vm.envAddress("OPTIMISM_SEPOLIA_OUTPUT_ORACLE");
         } else {
             revert("Unknown network");
         }

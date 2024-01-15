@@ -5,12 +5,12 @@ libs = ['lib']
 fs_permissions = [{ access = "read", path = "./"}]
 
 [rpc_endpoints]
-goerli = "${GOERLI_RPC_URL}"
+sepolia = "${SEPOLIA_RPC_URL}"
 zkevm = "${ZKEVM_RPC_URL}"
-optimism-goerli = "${OPTIMISM_GOERLI_RPC_URL}"
-base-goerli = "${BASE_GOERLI_RPC_URL}"
+optimism-sepolia = "${OPTIMISM_SEPOLIA_RPC_URL}"
+base-sepolia = "${BASE_SEPOLIA_RPC_URL}"
 
 [etherscan]
-goerli = { key = "${ETHERSCAN_API_KEY}" }
-optimism-goerli = { key = "${OPTIMISM_ETHERSCAN_API_KEY}" }
-base-goerli = { key = "${BASE_ETHERSCAN_API_KEY}" }
+sepolia = { key = "${ETHERSCAN_API_KEY}" }
+optimism-sepolia = { key = "${OPTIMISM_ETHERSCAN_API_KEY}" }
+base-sepolia = { key = "${BASE_ETHERSCAN_API_KEY}" }
