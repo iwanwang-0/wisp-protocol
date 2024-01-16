@@ -29,10 +29,10 @@ contract SendMsg is Script {
         Types.CRCMessage memory message = Types.CRCMessage(
             1,
             chainId, // destination chian id
-            1,
+            2,
             msg.sender,
             receiverDemo,
-            "Hello world",
+            "Hey Optimism",
             0.1 ether,
             0.1 ether,
             ""
