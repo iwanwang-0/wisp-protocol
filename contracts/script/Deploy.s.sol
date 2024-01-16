@@ -13,13 +13,14 @@ contract Deploy is Script {
 		uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 		vm.startBroadcast(deployerPrivateKey);
 
-		bytes32 goerliGenesisValidatorRoot = bytes32(0x043db0d9a83813551ee2f33450d23797757d430911a9320530ad8a0eabc43efb);
-		uint256 goerliGenesisType = 1616508000;
+		bytes32 goerliGenesisValidatorRoot = bytes32(0xd8ea171f3c94aea21ebc42a1ed61052acf3f9209c00e4efbaaddac09ed9b8078);
+		uint256 goerliGenesisType = 1655733600;
 		uint256 goerliSecondsPerSlot = uint256(12);
-		bytes4 goerliForkVersion = bytes4(0x02001020);
+		bytes4 goerliForkVersion = bytes4(0x90000069);
 
-		// Important! The following script will deploy a Goerli Beacon Light Client starting from Period 831
-		uint256 goerliStartSyncCommitteePeriod = uint256(831);
+		// Important! The following script will deploy a Goerli Beacon Light Client starting from Period 431
+        // TODO The following 3 params are mock.
+		uint256 goerliStartSyncCommitteePeriod = uint256(431);
 		bytes32 goerliStartSyncCommitteeRoot = 0x5858a9647c2f929796a25ffed7c546fe706a31c7c21ab9312dbd42d85ad0e95f;
 		bytes32 goerliStartSyncCommitteePoseidon = bytes32(uint256(0x210c51c58414c1befc439e1a142f96023545a5d215da4d40e98dfe180a113357));
 
